@@ -91,13 +91,13 @@
     -   name: Sets Apache conf file - Ubuntu
         become: true
         template:
-            src: "magneto.conf.j2"
-            dest: "/etc/apache2/sites-available/magneto.conf"
+            src: "magento.conf.j2"
+            dest: "/etc/apache2/sites-available/magento.conf"
         when:
                 - os_check.stdout | regex_search("Ubuntu")
 
     -   name: Disable default config
-        command: a2ensite magneto.conf
+        command: a2ensite magento.conf
         when:
             - os_check.stdout | regex_search("Ubuntu")
 
@@ -122,8 +122,8 @@
     -   name: Sets Apache conf file - CentOS
         become: true
         template:
-            src: "magneto.conf.j2"
-            dest: "/etc/httpd/conf.d/magneto.conf"
+            src: "magento.conf.j2"
+            dest: "/etc/httpd/conf.d/magento.conf"
         when:
                 - os_check.stdout | regex_search("CentOS")
 
