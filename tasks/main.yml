@@ -18,14 +18,14 @@
 
     # -   name: Move the Repos Around
     #     command: 
-    #          mv /tmp/upload/ /var/www/html/magneto2
+    #          mv /tmp/upload/ /var/www/html/magento2-2.3
     #     ignore_errors: yes
     #     when:
     #         - os_check.stdout | regex_search("Ubuntu") or os_check.stdout | regex_search("CentOS")
     
     -   name: Create Magneto Directory
         file:
-            path: /var/www/html/magneto2
+            path: /var/www/html/magento2-2.3
             recurse: yes
             owner: www-data
             mode: '0755'
@@ -34,7 +34,7 @@
 
     -   name: Create Magneto Directory
         file:
-            path: /var/www/html/magneto2
+            path: /var/www/html/magento2-2.3
             recurse: yes
             owner: apache
             mode: '0755'
@@ -49,8 +49,8 @@
 
     # -   name: Copy files
     #     copy:
-    #         src: /var/www/html/magneto2/config-dist.php
-    #         dest: /var/www/html/magneto2/config.php
+    #         src: /var/www/html/magento2-2.3/config-dist.php
+    #         dest: /var/www/html/magento2-2.3/config.php
     #         owner: www-data
     #         group: www-data
     #         mode: '0777'
@@ -59,8 +59,8 @@
 
     # -   name: Copy files
     #     copy:
-    #         src: /var/www/html/magneto2/admin/config-dist.php
-    #         dest: /var/www/html/magneto2/admin/config.php
+    #         src: /var/www/html/magento2-2.3/admin/config-dist.php
+    #         dest: /var/www/html/magento2-2.3/admin/config.php
     #         owner: www-data
     #         group: www-data
     #         mode: '0777'
@@ -70,8 +70,8 @@
     
     # -   name: Copy files
     #     copy:
-    #         src: /var/www/html/magneto2/config-dist.php
-    #         dest: /var/www/html/magneto2/config.php
+    #         src: /var/www/html/magento2-2.3/config-dist.php
+    #         dest: /var/www/html/magento2-2.3/config.php
     #         owner: apache
     #         group: apache
     #         mode: '0777'
@@ -80,8 +80,8 @@
 
     # -   name: Copy files
     #     copy:
-    #         src: /var/www/html/magneto2/admin/config-dist.php
-    #         dest: /var/www/html/magneto2/admin/config.php
+    #         src: /var/www/html/magento2-2.3/admin/config-dist.php
+    #         dest: /var/www/html/magento2-2.3/admin/config.php
     #         owner: apache
     #         group: apache
     #         mode: '0777'
@@ -148,7 +148,7 @@
 
     -   name: Granting Permissions
         file:
-            path: /var/www/html/magneto2
+            path: /var/www/html/magento2-2.3
             recurse: yes
             owner: www-data
             mode: '0777'
@@ -157,7 +157,7 @@
 
     -   name: Granting Permissions
         file:
-            path: /var/www/html/magneto2
+            path: /var/www/html/magento2-2.3
             recurse: yes
             owner: apache
             mode: '0777'
