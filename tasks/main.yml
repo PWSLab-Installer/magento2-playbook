@@ -186,3 +186,24 @@
             state: disabled
         when:
             - os_check.stdout | regex_search("CentOS") 
+
+
+    -   name: Composer Install
+        composer:
+            command: install
+            working_dir: /var/www/html/magento2-2.3
+
+
+    -   name: Restart Apache
+        service:
+            name: apache2
+            state: restarted
+        when:
+            - os_check.stdout | regex_search("Ubuntu")
+
+    -   name: Restart Apache
+        service:
+            name: httpd
+            state: restarted
+        when:
+            - os_check.stdout | regex_search("CentOS")
