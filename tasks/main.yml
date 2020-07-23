@@ -1,0 +1,171 @@
+---
+
+    -   name: Download Magneto
+        get_url:
+            url: https://github.com/magento/magento2/archive/2.3.zip
+            dest: /tmp/magneto.2.3.zip
+        when:
+            - os_check.stdout | regex_search("Ubuntu") or os_check.stdout | regex_search("CentOS")
+
+
+    -   name: Extract Magneto into /tmp
+        unarchive:
+            src: /tmp/magneto.2.3.zip
+            dest: /var/www/html/
+        when:
+            - os_check.stdout | regex_search("Ubuntu") or os_check.stdout | regex_search("CentOS")
+
+
+    # -   name: Move the Repos Around
+    #     command: 
+    #          mv /tmp/upload/ /var/www/html/magneto2
+    #     ignore_errors: yes
+    #     when:
+    #         - os_check.stdout | regex_search("Ubuntu") or os_check.stdout | regex_search("CentOS")
+    
+    -   name: Create Magneto Directory
+        file:
+            path: /var/www/html/magneto2
+            recurse: yes
+            owner: www-data
+            mode: '0755'
+        when:
+            - os_check.stdout | regex_search("Ubuntu") 
+
+    -   name: Create Magneto Directory
+        file:
+            path: /var/www/html/magneto2
+            recurse: yes
+            owner: apache
+            mode: '0755'
+        when:
+            - os_check.stdout | regex_search("CentOS")
+
+    -   name: Install Composer
+        shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+        when:
+            - os_check.stdout | regex_search("Ubuntu") or os_check.stdout | regex_search("CentOS")
+
+
+    # -   name: Copy files
+    #     copy:
+    #         src: /var/www/html/magneto2/config-dist.php
+    #         dest: /var/www/html/magneto2/config.php
+    #         owner: www-data
+    #         group: www-data
+    #         mode: '0777'
+    #     when:
+    #         - os_check.stdout | regex_search("Ubuntu") 
+
+    # -   name: Copy files
+    #     copy:
+    #         src: /var/www/html/magneto2/admin/config-dist.php
+    #         dest: /var/www/html/magneto2/admin/config.php
+    #         owner: www-data
+    #         group: www-data
+    #         mode: '0777'
+    #     when:
+    #         - os_check.stdout | regex_search("Ubuntu") 
+
+    
+    # -   name: Copy files
+    #     copy:
+    #         src: /var/www/html/magneto2/config-dist.php
+    #         dest: /var/www/html/magneto2/config.php
+    #         owner: apache
+    #         group: apache
+    #         mode: '0777'
+    #     when:
+    #         - os_check.stdout | regex_search("CentOS") 
+
+    # -   name: Copy files
+    #     copy:
+    #         src: /var/www/html/magneto2/admin/config-dist.php
+    #         dest: /var/www/html/magneto2/admin/config.php
+    #         owner: apache
+    #         group: apache
+    #         mode: '0777'
+    #     when:
+    #         - os_check.stdout | regex_search("CentOS") 
+
+    -   name: Sets Apache conf file - Ubuntu
+        become: true
+        template:
+            src: "magneto.conf.j2"
+            dest: "/etc/apache2/sites-available/magneto.conf"
+        when:
+                - os_check.stdout | regex_search("Ubuntu")
+
+    -   name: Disable default config
+        command: a2ensite magneto.conf
+        when:
+            - os_check.stdout | regex_search("Ubuntu")
+
+    -   name: Disable default config
+        command: a2dissite 000-default.conf
+        when:
+            - os_check.stdout | regex_search("Ubuntu")
+
+    -   name: Install PHP Packages
+        apt: name={{ item }} update_cache=yes state=present
+        loop: [ 'php-cli', 'php-common', 'php-mbstring', 'php-gd', 'php-intl', 'php-xml', 'php-mysql', 'php-zip', 'php-curl', 'php-xmlrpc', 'libapache2-mod-php', 'php-gd', 'php-zip', 'php-curl' ]
+        when:
+            - os_check.stdout | regex_search("Ubuntu")
+
+    -   name: Restart Apache
+        service:
+            name: apache2
+            state: restarted
+        when:
+            - os_check.stdout | regex_search("Ubuntu")
+
+    -   name: Sets Apache conf file - CentOS
+        become: true
+        template:
+            src: "magneto.conf.j2"
+            dest: "/etc/httpd/conf.d/magneto.conf"
+        when:
+                - os_check.stdout | regex_search("CentOS")
+
+    -   name: Install PHP Packages
+        yum: name={{ item }} update_cache=yes state=present
+        loop: [ 'php-mcrypt', 'curl', 'zlib', 'php-gd', 'php-mbstring', 'php-xml', 'php-mysql', 'php-zip' ]
+        when:
+            - os_check.stdout | regex_search("CentOS Linux 8")
+
+    -   name: Install PHP Packages
+        yum: name={{ item }} update_cache=yes state=present
+        loop: [ 'curl', 'zlib', 'php-gd', 'php-mbstring', 'php-xml', 'php-zip' ]
+        when:
+            - os_check.stdout | regex_search("CentOS Linux 7")
+
+    -   name: Restart Apache
+        service:
+            name: httpd
+            state: restarted
+        when:
+            - os_check.stdout | regex_search("CentOS")
+
+    -   name: Granting Permissions
+        file:
+            path: /var/www/html/magneto2
+            recurse: yes
+            owner: www-data
+            mode: '0777'
+        when:
+            - os_check.stdout | regex_search("Ubuntu") 
+
+    -   name: Granting Permissions
+        file:
+            path: /var/www/html/magneto2
+            recurse: yes
+            owner: apache
+            mode: '0777'
+        when:
+            - os_check.stdout | regex_search("CentOS") 
+
+    -   name: Disable SELinux
+        selinux:
+            state: disabled
+        when:
+            - os_check.stdout | regex_search("CentOS") 

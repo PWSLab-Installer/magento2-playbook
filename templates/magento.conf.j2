@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+    #  ServerAdmin admin@domain.com
+     DocumentRoot /var/www/html/magento2/
+     ServerName localhost
+    #  ServerAlias www.domain.com
+
+     <Directory /var/www/html/magento2/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+     </Directory>
+
+     ErrorLog /var/log/magento.error.log
+     CustomLog /var/log/magento.access.log combined
+</VirtualHost>

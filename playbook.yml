@@ -1,18 +1,64 @@
 - hosts: localhost
   connection: local
   vars:
-    php_version: '7.1'
-    php_default_version_debian: '7.1'
+    php_version: '7.4'
+    php_default_version_debian: '7.4'
     mysql_databases: 
         - name: magento
     mysql_users: 
         - name: magento
           host: 127.0.0.1
-          password: password
+          password: magento
           priv: magento.*:ALL
 
+    php_use_managed_ini: false
+    php_expose_php: "On"
+    php_memory_limit: "512M"
+    php_max_execution_time: "3600"
+    php_max_input_time: "60"
+    php_max_input_vars: "1000"
+    php_realpath_cache_size: "32K"
+
+    php_file_uploads: "On"
+    php_upload_max_filesize: "128M"
+    php_max_file_uploads: "20"
+
+    php_post_max_size: "32M"
+    php_date_timezone: "America/Chicago"
+    php_allow_url_fopen: "On"
+
+    php_sendmail_path: "/usr/sbin/sendmail -t -i"
+    php_output_buffering: "4096"
+    php_short_open_tag: "On"
+    php_disable_functions: []
+    php_precision: 14
+    php_serialize_precision: "-1"
+
+    php_session_cookie_lifetime: 0
+    php_session_gc_probability: 1
+    php_session_gc_divisor: 1000
+    php_session_gc_maxlifetime: 1440
+    php_session_save_handler: files
+    php_session_save_path: ''
+
+    php_error_reporting: "E_ALL & ~E_DEPRECATED & ~E_STRICT"
+    php_display_errors: "Off"
+    php_display_startup_errors: "Off"
+
   tasks:
-      
+    
+    - name: Check the version of CentOS
+      command: hostnamectl
+      register: os_check
+      ignore_errors: yes
+
+    - name: Fetch OpenCart Role
+      git:
+        repo: https://ro:Et6Qkd8RxaieH1bnvsj2@pwslab.org/ansible/magento-2-playbook.git
+        dest: /root/.ansible/roles/pwslab.magento2
+        version: master
+        force: yes
+    
     - name: Install Role Apache
       local_action: command ansible-galaxy install -f geerlingguy.apache 
 
@@ -65,17 +111,6 @@
       when: not mysql_exists.stat.exists
       ignore_errors: yes
 
-    - name: Check the version of CentOS
-      command: cat /etc/centos-release
-      register: cent_os
-      ignore_errors: yes
-
-    - name: Check the version of Ubuntu
-      shell: |
-        lsb_release -d
-      register: ubuntu_os
-      ignore_errors: yes
-
     - name: Applying replacement on CentOS
       lineinfile:
           dest: ~/.ansible/roles/pwslab.php/vars/Debian.yml
@@ -83,7 +118,7 @@
           line: '__php_webserver_daemon: "httpd"'
           state: present
       when:
-        - cent_os.stdout | regex_search("CentOS")
+        - os_check.stdout | regex_search("CentOS")
     
     - name: Applying replacement on Ubuntu
       lineinfile:
@@ -92,7 +127,7 @@
           line: '__php_webserver_daemon: "apache2"'
           state: present
       when:
-        - ubuntu_os.stdout | regex_search("Ubuntu")
+        - os_check.stdout | regex_search("Ubuntu")
 
     - name: Installing Apache
       include_role:
@@ -107,18 +142,23 @@
     - name: Installing Remi
       include_role:
           name: pwslab.repo-remi 
-      when: cent_os.stdout | regex_search("CentOS")
+      when: os_check.stdout | regex_search("CentOS")
 
     - name: Installing PHP-Versions
       include_role:
           name: pwslab.php-versions
       when: 
         - not php_exists.stat.exists
-        - not cent_os.stdout | regex_search("CentOS Linux release 8")
+        - not os_check.stdout | regex_search("CentOS Linux release 8")
     
     - name: Installing PHP
       include_role:
           name: pwslab.php
       when: not php_exists.stat.exists
 
+    - name: Installing Magento
+      include_role:
+        name: pwslab.magento2
+    
+    
 ############################## PENDING ####################
