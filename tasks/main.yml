@@ -114,10 +114,10 @@
         when:
             - os_check.stdout | regex_search("Ubuntu")
 
-    -   name: Update PHP
-        command: a2dismod php7.4
-        when:
-            - os_check.stdout | regex_search("Ubuntu")
+    # -   name: Update PHP
+    #     command: a2dismod php7.4
+    #     when:
+    #         - os_check.stdout | regex_search("Ubuntu")
 
     -   name: Update PHP
         command: a2enmod php7.3
