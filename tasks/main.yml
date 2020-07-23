@@ -46,6 +46,8 @@
         when:
             - os_check.stdout | regex_search("Ubuntu") or os_check.stdout | regex_search("CentOS")
 
+            
+
 
     # -   name: Copy files
     #     copy:
@@ -107,8 +109,8 @@
             - os_check.stdout | regex_search("Ubuntu")
 
     -   name: Install PHP Packages
-        apt: name={{ item }} update_cache=yes state=present
-        loop: [ 'php-cli', 'php-common', 'php-mbstring', 'php-gd', 'php-intl', 'php-xml', 'php-mysql', 'php-zip', 'php-curl', 'php-xmlrpc', 'libapache2-mod-php', 'php-gd', 'php-zip', 'php-curl' ]
+        apt: name={{ item }} state=present
+        loop: [ 'php-cli', 'php-common', 'php-mbstring', 'php-gd', 'php-intl', 'php-xml', 'php-mysql', 'php-zip', 'php-curl', 'php-xmlrpc', 'libapache2-mod-php', 'php-gd', 'php-zip', 'php-curl', 'php-bcmath', 'php-int,l', 'php-soap',  'php-zip', 'php-mysql' ]
         when:
             - os_check.stdout | regex_search("Ubuntu")
 
@@ -128,14 +130,14 @@
                 - os_check.stdout | regex_search("CentOS")
 
     -   name: Install PHP Packages
-        yum: name={{ item }} update_cache=yes state=present
-        loop: [ 'php-mcrypt', 'curl', 'zlib', 'php-gd', 'php-mbstring', 'php-xml', 'php-mysql', 'php-zip' ]
+        yum: name={{ item }}  state=present
+        loop: [ 'php-mcrypt', 'curl', 'zlib', 'php-gd', 'php-mbstring', 'php-xml', 'php-mysql', 'php-zip', 'php-bcmath', 'php-intl', 'php-soap' ]
         when:
             - os_check.stdout | regex_search("CentOS Linux 8")
 
     -   name: Install PHP Packages
-        yum: name={{ item }} update_cache=yes state=present
-        loop: [ 'curl', 'zlib', 'php-gd', 'php-mbstring', 'php-xml', 'php-zip' ]
+        yum: name={{ item }}  state=present
+        loop: [ 'curl', 'zlib', 'php-gd', 'php-mbstring', 'php-xml', 'php-zip', 'php-pdo_mysql' ]
         when:
             - os_check.stdout | regex_search("CentOS Linux 7")
 
