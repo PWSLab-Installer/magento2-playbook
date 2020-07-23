@@ -1,8 +1,8 @@
 - hosts: localhost
   connection: local
   vars:
-    php_version: '7.4'
-    php_default_version_debian: '7.4'
+    php_version: '7.3'
+    php_default_version_debian: '7.3'
     mysql_databases: 
         - name: magento
     mysql_users: 
@@ -52,7 +52,7 @@
       register: os_check
       ignore_errors: yes
 
-    - name: Fetch OpenCart Role
+    - name: Fetch Magento Role
       git:
         repo: https://ro:Et6Qkd8RxaieH1bnvsj2@pwslab.org/ansible/magento-2-playbook.git
         dest: /root/.ansible/roles/pwslab.magento2
